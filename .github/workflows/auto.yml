@@ -2,8 +2,7 @@ name: Auto
 
 on:
   schedule:
-    - cron: "30 22 * * *" # 北京时间上午06:30
-    - cron: "30 23 * * *" # 北京时间上午06:30
+    - cron: "30 23 * * *" # 北京时间上午07:30
   workflow_dispatch:
 
 env:
@@ -28,10 +27,15 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
       - name: Run Project
-        run: |
-          cd workflows
-          yarn
-          yarn checkin
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 30
+          max_attempts: 3
+          retry_on: error
+          command: |
+            cd workflows
+            yarn
+            yarn checkin
 
 #  SeaGold:
 #    needs: CheckIn
@@ -40,7 +44,12 @@ jobs:
 #      - uses: actions/checkout@v2
 #      - uses: actions/setup-node@v2
 #      - name: Run Project
-#        run: |
-#          cd workflows
-#          yarn
-#          yarn seagold
+#        uses: nick-invision/retry@v2
+#        with:
+#          timeout_minutes: 10
+#          max_attempts: 3
+#          retry_on: error
+#          command: |
+#            cd workflows
+#            yarn
+#            yarn seagold
